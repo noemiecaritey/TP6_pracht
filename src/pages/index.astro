@@ -1,11 +1,11 @@
 ---
 import PlotFigure from "../components/PlotFigure.astro";
-import Layout from "../layouts/Layout.astro";
+import LayoutMenu from "../layouts/LayoutMenu.astro";
 import * as Plot from "@observablehq/plot";
 import penguins from "../assets/penguins.json";
 ---
 
-<Layout>
+<LayoutMenu>
   <h1 class="text-2xl">Test Astro et Plot (Observablehq)</h1>
   <PlotFigure
     options={{
@@ -18,4 +18,4 @@ import penguins from "../assets/penguins.json";
       ],
     }}
   />
-</Layout>
+</LayoutMenu>

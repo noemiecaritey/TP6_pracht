@@ -1,0 +1,26 @@
+---
+const liens = [
+  { href: "/", label: "Accueil" },
+  { href: "/tous-les-pingouins", label: "Tous les pingouins" },
+  { href: "/rendu-dynamique", label: "Rendu dynamique" },
+  { href: "/rendu-statique", label: "Rendu statique" },
+];
+const chemin = Astro.url.pathname;
+---
+
+<nav class="flex gap-4 p-4 bg-sky-700 text-white">
+  {
+    liens.map((l) => (
+      <a
+        href={l.href}
+        class={`hover:underline ${
+          (l.href === "/" ? chemin === "/" : chemin.startsWith(l.href))
+            ? "font-bold underline"
+            : ""
+        }`}
+      >
+        {l.label}
+      </a>
+    ))
+  }
+</nav>

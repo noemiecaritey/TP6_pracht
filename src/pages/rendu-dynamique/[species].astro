@@ -1,0 +1,32 @@
+---
+export const prerender = false;
+import PlotFigure from "../../components/PlotFigure.astro";
+import LayoutMenu from "../../layouts/LayoutMenu.astro";
+import * as Plot from "@observablehq/plot";
+import penguins from "../../assets/penguins.json";
+
+const { species } = Astro.params;
+const filtered = penguins.filter((p) => p.species === species);
+
+if (filtered.length === 0) {
+  return Astro.redirect("/rendu-dynamique");
+}
+---
+
+<LayoutMenu>
+  <h1 class="text-2xl">Espèce : {species}</h1>
+  <p>{filtered.length} individus</p>
+  <PlotFigure
+    options={{
+      grid: true,
+      marks: [
+        Plot.dot(filtered, {
+          x: "culmen_length_mm",
+          y: "culmen_depth_mm",
+          stroke: "species",
+        }),
+      ],
+    }}
+  />
+  <p><a class="text-sky-700 underline" href="/rendu-dynamique">← Retour</a></p>
+</LayoutMenu>

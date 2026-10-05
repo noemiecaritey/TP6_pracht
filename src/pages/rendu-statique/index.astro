@@ -1,0 +1,21 @@
+---
+import LayoutMenu from "../../layouts/LayoutMenu.astro";
+import penguins from "../../assets/penguins.json";
+
+const species = [...new Set(penguins.map((p) => p.species))];
+---
+
+<LayoutMenu>
+  <h1 class="text-2xl">Rendu statique : espèces</h1>
+  <ul class="list-disc ml-6">
+    {
+      species.map((s) => (
+        <li>
+          <a class="text-sky-700 underline" href={`/rendu-statique/${s}`}>
+            {s}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</LayoutMenu>

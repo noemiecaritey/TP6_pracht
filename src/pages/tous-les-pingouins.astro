@@ -1,0 +1,71 @@
+---
+import PlotFigure from "../components/PlotFigure.astro";
+import LayoutMenu from "../layouts/LayoutMenu.astro";
+import * as Plot from "@observablehq/plot";
+import penguins from "../assets/penguins.json";
+
+// Liste des espèces déterminée automatiquement
+const species = [...new Set(penguins.map((p) => p.species))];
+
+// Un graphique par espèce
+const plots = species.map((s) => ({
+  species: s,
+  options: {
+    grid: true,
+    marks: [
+      Plot.dot(
+        penguins.filter((p) => p.species === s),
+        {
+          x: "culmen_length_mm",
+          y: "culmen_depth_mm",
+          stroke: "species",
+        },
+      ),
+    ],
+  },
+}));
+---
+
+<LayoutMenu>
+  <h1 class="text-2xl">Graphiques de toutes les espèces</h1>
+
+  <nav class="flex gap-2 my-4" id="tabs">
+    {
+      species.map((s, i) => (
+        <button
+          type="button"
+          data-tab={s}
+          class={`px-3 py-1 rounded border ${i === 0 ? "bg-sky-600 text-white" : ""}`}
+        >
+          {s}
+        </button>
+      ))
+    }
+  </nav>
+
+  {
+    plots.map((p, i) => (
+      <section data-panel={p.species} class={i === 0 ? "" : "hidden"}>
+        <h2 class="text-xl">{p.species}</h2>
+        <PlotFigure options={p.options} />
+      </section>
+    ))
+  }
+</LayoutMenu>
+
+<script is:inline>
+  const buttons = document.querySelectorAll("[data-tab]");
+  const panels = document.querySelectorAll("[data-panel]");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      panels.forEach((p) =>
+        p.classList.toggle("hidden", p.dataset.panel !== btn.dataset.tab),
+      );
+      buttons.forEach((b) => {
+        const actif = b === btn;
+        b.classList.toggle("bg-sky-600", actif);
+        b.classList.toggle("text-white", actif);
+      });
+    });
+  });
+</script>

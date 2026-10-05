@@ -1,0 +1,36 @@
+---
+import PlotFigure from "../../components/PlotFigure.astro";
+import LayoutMenu from "../../layouts/LayoutMenu.astro";
+import * as Plot from "@observablehq/plot";
+import penguins from "../../assets/penguins.json";
+
+// Génère une page par espèce au moment du build
+export function getStaticPaths() {
+  const species = [...new Set(penguins.map((p) => p.species))];
+  return species.map((s) => ({
+    params: { species: s },
+    props: { filtered: penguins.filter((p) => p.species === s) },
+  }));
+}
+
+const { species } = Astro.params;
+const { filtered } = Astro.props;
+---
+
+<LayoutMenu>
+  <h1 class="text-2xl">Espèce : {species}</h1>
+  <p>{filtered.length} individus</p>
+  <PlotFigure
+    options={{
+      grid: true,
+      marks: [
+        Plot.dot(filtered, {
+          x: "culmen_length_mm",
+          y: "culmen_depth_mm",
+          stroke: "species",
+        }),
+      ],
+    }}
+  />
+  <p><a class="text-sky-700 underline" href="/rendu-statique">← Retour</a></p>
+</LayoutMenu>
