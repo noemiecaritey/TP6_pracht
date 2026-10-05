@@ -1,0 +1,36 @@
+---
+export const prerender = false;
+import PlotFigure from "../../../components/PlotFigure.astro";
+import LayoutMenu from "../../../layouts/LayoutMenu.astro";
+import * as Plot from "@observablehq/plot";
+import cars from "../../../assets/cars.json";
+
+const { year } = Astro.params;
+const filtered = cars.filter((c) => c.year.toString() === year);
+
+if (filtered.length === 0) {
+  return Astro.redirect("/cars/rendu-dynamique");
+}
+---
+
+<LayoutMenu>
+  <h1 class="text-2xl">Voitures de l'année {year}</h1>
+  <p>{filtered.length} voiture(s)</p>
+  <PlotFigure
+    options={{
+      grid: true,
+      x: { label: "Poids (lb)" },
+      y: { label: "Puissance (hp)" },
+      marks: [
+        Plot.dot(filtered, {
+          x: "weight (lb)",
+          y: "power (hp)",
+          fill: "steelblue",
+          fillOpacity: 0.7,
+          r: 4,
+        }),
+      ],
+    }}
+  />
+  <p><a class="text-sky-700 underline" href="/cars/rendu-dynamique">← Retour</a></p>
+</LayoutMenu>

@@ -1,0 +1,75 @@
+---
+import LayoutMenu from "../../layouts/LayoutMenu.astro";
+import PlotFigure from "../../components/PlotFigure.astro";
+import * as Plot from "@observablehq/plot";
+import cars from "../../assets/cars.json";
+
+const years = [...new Set(cars.map((c) => c.year))].sort();
+---
+
+<LayoutMenu>
+  <h1 class="text-2xl">Voitures : toutes les années</h1>
+
+  <nav class="flex gap-2 my-4">
+    {
+      years.map((y, i) => (
+        <button
+          type="button"
+          data-tab={y}
+          class={`px-3 py-1 rounded border ${i === 0 ? "bg-sky-600 text-white" : ""}`}
+        >
+          {y}
+        </button>
+      ))
+    }
+  </nav>
+
+  {
+    years.map((y, i) => (
+      <section data-panel={y} class={i === 0 ? "" : "hidden"}>
+        <h2 class="text-xl">Année {y}</h2>
+        <PlotFigure
+          options={{
+            grid: true,
+            x: { label: "Poids (lb)" },
+            y: { label: "Puissance (hp)" },
+            marks: [
+              Plot.dot(
+                cars.filter((c) => c.year === y),
+                {
+                  x: "weight (lb)",
+                  y: "power (hp)",
+                  fill: "steelblue",
+                  fillOpacity: 0.7,
+                  r: 4,
+                },
+              ),
+            ],
+          }}
+        />
+      </section>
+    ))
+  }
+
+  <p class="mt-4 text-sm">
+    Voir aussi : <a class="text-sky-700 underline" href="/cars/rendu-dynamique">rendu dynamique</a>
+    · <a class="text-sky-700 underline" href="/cars/rendu-statique">rendu statique</a>
+  </p>
+</LayoutMenu>
+
+<script is:inline>
+  const buttons = document.querySelectorAll("[data-tab]");
+  const panels = document.querySelectorAll("[data-panel]");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      panels.forEach((p) =>
+        p.classList.toggle("hidden", p.dataset.panel !== btn.dataset.tab),
+      );
+      buttons.forEach((b) => {
+        const actif = b === btn;
+        b.classList.toggle("bg-sky-600", actif);
+        b.classList.toggle("text-white", actif);
+      });
+    });
+  });
+</script>
